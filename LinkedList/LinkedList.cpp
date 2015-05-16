@@ -11,6 +11,7 @@ LinkedList<T>::LinkedList()
     size = 0;
 
     endNode = new ListNode<T>;
+    endNode->set_data(NULL);
     endNode->set_next(NULL);
     endNode->set_prev(NULL);
 }
@@ -18,16 +19,21 @@ LinkedList<T>::LinkedList()
 template<class T>
 LinkedList<T>::~LinkedList()
 {
-    delete endNode;
+    ListNode<T> *ln = head;
+    while(ln != NULL) {
+        ListNode<T> *ln2 = ln->get_next();
+        delete ln;
+        ln = ln2;
+    }
 }
 
 template<class T>
-void LinkedList<T>::push_front(T newVal)
+void LinkedList<T>::push_front(T &newVal)
 {
     ListNode<T> *ln = new ListNode<T>;
     ln->set_prev(NULL);
     ln->set_next(head);
-    ln->set_data(newVal);  
+    ln->set_data(&newVal);  
 
     if(empty()) {
         tail = ln;
@@ -42,12 +48,12 @@ void LinkedList<T>::push_front(T newVal)
 }
 
 template<class T>
-void LinkedList<T>::push_back(T newVal)
+void LinkedList<T>::push_back(T &newVal)
 {
     ListNode<T> *ln = new ListNode<T>;
     ln->set_prev(tail);
     ln->set_next(endNode);
-    ln->set_data(newVal);
+    ln->set_data(&newVal);
 
     if(empty())
         head = ln;
@@ -59,7 +65,7 @@ void LinkedList<T>::push_back(T newVal)
 }
 
 template<class T>
-typename LinkedList<T>::list_iterator LinkedList<T>::insert(T newVal, list_iterator li)
+typename LinkedList<T>::list_iterator LinkedList<T>::insert(T &newVal, list_iterator li)
 {
     if(li == begin()) {
         push_front(newVal);
@@ -67,7 +73,7 @@ typename LinkedList<T>::list_iterator LinkedList<T>::insert(T newVal, list_itera
         push_back(newVal);
     } else {
         ListNode<T> *ln = new ListNode<T>; 
-        ln->set_data(newVal);
+        ln->set_data(&newVal);
         ln->set_prev(li.node->get_prev());
         ln->set_next(li.node);
         ln->get_prev()->set_next(ln);
@@ -87,7 +93,7 @@ T LinkedList<T>::pop_front()
         cout << "pop_front() failed, list is empty. Exiting...\n";
         exit (1);
     } else {
-        rtnVal = head->data();
+        rtnVal = *(head->data());
         ListNode<T> *handle = head;
         if(size == 1) {
             head = NULL;
@@ -112,7 +118,7 @@ T LinkedList<T>::pop_back()
         cout << "pop_back() failed, list is empty. Exiting...\n";
         exit (1);
     } else {
-        rtnVal = tail->data();
+        rtnVal = *(tail->data());
         ListNode<T> *handle = tail;
         if(size == 1) {
             head = NULL;
@@ -160,7 +166,7 @@ T LinkedList<T>::front()
         cout << "front() failed, list is empty. Exiting...\n";
         exit (1);
     }
-    return head->data();
+    return *(head->data());
 }
 
 template<class T>
@@ -170,7 +176,7 @@ T LinkedList<T>::back()
         cout << "back() failed, list is empty. Exiting...\n";
         exit (1);
     }
-    return tail->data();
+    return *(tail->data());
 }
 
 template<class T>
@@ -180,21 +186,25 @@ bool LinkedList<T>::empty()
 }
 
 template<class T>
-typename LinkedList<T>::list_iterator LinkedList<T>::find_first(T searchVal)
+bool LinkedList<T>::find_first(T searchVal, list_iterator &pos)
 {
-    list_iterator rtn(NULL);
+    bool found = 0;
     list_iterator li;
 
     for(li=begin(); li!=end(); li++) {
         if(li.val() == searchVal) {
-            if(rtn.node == NULL) {    //if nothing was found yet
-                rtn.node = li.node;
+            if(found == 0) {    //if nothing was found yet
+                pos.node = li.node;
+                found = 1;
                 break;
             }
         }
     }
 
-    return rtn;
+    if(found == 0)
+        pos = end();
+
+    return found;
 }
 
 template<class T>
@@ -236,7 +246,7 @@ void LinkedList<T>::sort_list()
             pos = pos->get_next();
         }
 
-        while((comparer != NULL) && (element->data() <= comparer->data())) {
+        while((comparer != NULL) && (*(element->data()) <= *(comparer->data()))) {
             comparer = comparer->get_prev();
             shouldSwap = 1;
         }
@@ -297,10 +307,10 @@ LinkedList<T>::list_iterator::list_iterator(ListNode<T> *ln)
 template<class T>
 T LinkedList<T>::list_iterator::val()
 {
-    if(node == NULL) {
+    /*if(node == NULL) {
         return NULL;
-    }
-    return node->data();
+    }*/
+    return *(node->data());
 }
 
 template<class T>
@@ -377,24 +387,24 @@ bool LinkedList<T>::list_iterator::operator!=(const list_iterator &li)
     return (node != li.node);
 }
 
-int main()
+/*int main()
 {
-    LinkedList<int> ll;
-    ll.push_front(3);
-    ll.push_front(2);
-    ll.push_front(1);
+    LinkedList<int> *ll = new LinkedList<int>;
+    ll->push_front(3);
+    ll->push_front(2);
+    ll->push_front(1);
     LinkedList<int>::list_iterator li;
 
-    for(li=ll.begin(); li!=ll.end(); ++li)
+    for(li=ll->begin(); li!=ll->end(); ++li)
         cout << "Value: \t" << li.val() << "\n";
 
-    ll.pop_front();
-    ll.push_back(4);
-    cout << "new size: " << ll.size << endl;
+    ll->pop_front();
+    ll->push_back(4);
+    cout << "new size: " << ll->size << endl;
 
     LinkedList<char> ll2;
     for(char i='a'; i<='z'; i++)
-        ll2.push_front(i);
+        ll2.push_back(i);
 
     LinkedList<char>::list_iterator li2;
     for(li2=ll2.begin(); li2!=ll2.end(); li2++)
@@ -437,12 +447,12 @@ int main()
     cout << "New begin value: " << ll2.begin().val() << "\nNew li3 value: " << li3.val() << "\n\n";
 
     cout << "\n\nSearching for first occurance of value: c\n\n";
-    li3 = ll2.find_first('c');
-
-    cout << "\nfound " << li3.val() << "\n\n";
+    bool found = ll2.find_first('c', li3);
+    if(found)
+        cout << "\nfound " << li3.val() << "\n\n";
 
     cout << "\n\nSearching for first occurence of E\n\n"; //testing null return
-    li3 = ll2.find_first('E');
+    found = ll2.find_first('E',li3);
 
     cout << "\nfound " << li3.val() << "\n\n";
 
@@ -478,4 +488,4 @@ int main()
     cout << "Finished executing. Exiting...\n\n";
     
     return 0;
-}
+}*/

@@ -33,9 +33,9 @@ class LinkedList
         typename LinkedList<T>::list_iterator end();
 
         //Insert functions
-        void push_front(T newVal);
-        void push_back(T newVal);
-        typename LinkedList<T>::list_iterator insert(T newVal, list_iterator li);
+        void push_front(T &newVal);
+        void push_back(T &newVal);
+        typename LinkedList<T>::list_iterator insert(T &newVal, list_iterator li);
 
         //Remove functions
         T pop_front();
@@ -46,7 +46,7 @@ class LinkedList
         T front();
         T back();
         bool empty();
-        typename LinkedList<T>::list_iterator find_first(T searchVal);
+        bool find_first(T searchVal,list_iterator &pos);
         typename LinkedList<T>::list_iterator find_last(T searchVal);
         int size;
 

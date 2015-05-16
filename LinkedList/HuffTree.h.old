@@ -1,0 +1,41 @@
+#include<string>
+#include<vector>
+template<class T>
+class TreeNode;
+
+struct HuffNode
+{
+    char ch;
+    int freq;
+};
+
+class HuffTree
+{
+    public:
+        HuffTree();
+        HuffTree(const HuffTree &other);
+        ~HuffTree();
+        void insert(char c, int frequency);
+        string find_huff_string(char c);
+        void set_char(char c);
+        void set_freq(int f);
+        char get_char() const;
+        int get_freq() const;
+//        void copy_tree(TreeNode<HuffNode> *other);
+        void vector_to_tree(vector<TreeNode<HuffNode> *> &nodes);
+        void copy_tree(vector<TreeNode<HuffNode> *> &nodes, TreeNode<HuffNode> *other);
+        
+
+        bool operator<(const HuffTree &ht);
+        bool operator<=(const HuffTree &ht);
+        bool operator>(const HuffTree &ht);
+        bool operator>=(const HuffTree &ht);
+        bool operator==(const HuffTree &ht);
+        void operator=(const HuffTree &ht);
+         
+    private:
+        void destroy_tree(TreeNode<HuffNode> *node);
+        void insert(HuffNode hn, TreeNode<HuffNode> *node);
+        
+        TreeNode<HuffNode> *root;
+}; 

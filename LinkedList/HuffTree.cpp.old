@@ -1,0 +1,241 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include "TreeNode.cpp"
+#include "HuffTree.h"
+#include "LinkedList.cpp"
+using namespace std;
+
+HuffTree::HuffTree()
+{
+    root = NULL;
+}
+
+//Copy constructor
+HuffTree::HuffTree(const HuffTree &other)
+{
+    vector<TreeNode<HuffNode> *> nodes;
+    if(other.root != NULL) {
+        copy_tree(nodes, other.root);
+        vector_to_tree(nodes); 
+    } else
+        root = NULL;
+}
+
+//Copy constructor
+/*HuffTree::HuffTree(const HuffTree &other)
+{
+    cout << "copying a tree\n\n";
+    if(other.root != NULL) {
+        cout << "other.root is not null\n";
+        copy_tree(other.root);
+    } else {
+        root = NULL;
+    }
+}*/
+
+/*void HuffTree::copy_tree(TreeNode<HuffNode> *node)
+{
+    cout << "inserting new node to tree\n";
+    insert(node->data().ch, node->data().freq);
+    if(node->get_left() != NULL) {
+        cout << "node getleft was not null\n";
+        copy_tree(node->get_left());
+    }
+    if(node->get_right() != NULL) {
+        cout << "node getright was not null\n";
+        copy_tree(node->get_right());
+    }
+}*/
+
+void HuffTree::insert(char c, int frequency)
+{
+    HuffNode hn;
+    hn.ch = c;
+    hn.freq = frequency;
+    if(root != NULL) {
+        insert(hn, root);
+    } else {
+        TreeNode<HuffNode> *newNode = new TreeNode<HuffNode>;
+        newNode->set_data(hn);
+        newNode->set_left(NULL);
+        newNode->set_right(NULL);
+        root = newNode;
+    }
+}
+
+void HuffTree::insert(HuffNode hn, TreeNode<HuffNode> *node)
+{
+    if(hn.freq < node->data().freq) {
+        if(node->get_left() != NULL) {
+            insert(hn, node->get_left());
+        } else {
+            TreeNode<HuffNode> *newNode = new TreeNode<HuffNode>;
+            node->set_left(newNode);
+            newNode->set_data(hn);
+            newNode->set_left(NULL);
+            newNode->set_right(NULL);
+        }
+    } else if(hn.freq >= node->data().freq) {
+        if(node->get_right() != NULL) {
+            insert(hn, node->get_right());
+        } else {
+            TreeNode<HuffNode> *newNode = new TreeNode<HuffNode>;
+            node->set_right(newNode);
+            newNode->set_data(hn);
+            newNode->set_left(NULL);
+            newNode->set_right(NULL);
+        }
+    }
+}
+            
+void HuffTree::copy_tree(vector<TreeNode<HuffNode> *> &nodes, TreeNode<HuffNode> *other)
+{
+    if(other != NULL) {
+        TreeNode<HuffNode> *newNode = new TreeNode<HuffNode>;
+        newNode->set_data(other->data());
+        nodes.push_back(newNode);
+        copy_tree(nodes,other->get_left());
+        copy_tree(nodes,other->get_right());
+    }
+}
+
+void HuffTree::vector_to_tree(vector<TreeNode<HuffNode> *> &nodes)
+{
+    root = nodes[0];
+    for(int i=0; i<nodes.size(); i++) {
+        if(nodes.size() > (2*i)+1)
+            nodes[i]->set_left(nodes[(2*i)+1]);
+        else
+            nodes[i]->set_left(NULL);
+        if(nodes.size() > (2*i)+2)
+            nodes[i]->set_right(nodes[(2*i)+2]);
+        else
+            nodes[i]->set_right(NULL);
+    }
+}
+        
+
+HuffTree::~HuffTree()
+{
+    destroy_tree(root);
+}
+
+void HuffTree::destroy_tree(TreeNode<HuffNode> *node)
+{
+    if(node != NULL) {
+        destroy_tree(node->get_left());
+        destroy_tree(node->get_right());
+        delete node;
+    }
+}
+
+/*void HuffTree::set_char(char c)
+{
+    HuffNode hn;
+    hn.freq = root->data().freq;
+    hn.ch = c;
+    root->set_data(hn);
+}
+
+void HuffTree::set_freq(int f)
+{
+    HuffNode hn;
+    hn.ch = root->data().ch;
+    hn.freq = f;
+    root->set_data(hn);
+}*/
+
+char HuffTree::get_char() const
+{
+    return root->data().ch;
+}
+
+int HuffTree::get_freq() const
+{
+    return root->data().freq;
+}
+
+bool HuffTree::operator<(const HuffTree &ht)
+{
+    return get_freq()<ht.get_freq();
+}
+
+bool HuffTree::operator<=(const HuffTree &ht)
+{
+    return get_freq()<=ht.get_freq();
+}
+
+bool HuffTree::operator>(const HuffTree &ht)
+{
+    return get_freq()>ht.get_freq();
+}
+
+bool HuffTree::operator>=(const HuffTree &ht)
+{
+    return get_freq()>=ht.get_freq();
+}
+
+bool HuffTree::operator==(const HuffTree &ht)
+{
+    return get_freq()==ht.get_freq();
+}
+
+void HuffTree::operator=(const HuffTree &ht)
+{
+    TreeNode<HuffNode> *newNode = new TreeNode<HuffNode>;
+    HuffNode hn;
+    hn.ch = ht.get_char();
+    hn.freq = ht.get_freq();
+    newNode->set_data(hn);
+    newNode->set_left(NULL);
+    newNode->set_right(NULL);
+    root = newNode;
+
+    //root = ht.root;
+}
+
+int main()
+{
+    HuffTree *ht, *ht2;
+    ht = new HuffTree;
+    ht2= new HuffTree;
+    ht->insert('a', 1);
+    ht2->insert('b',2);
+
+    cout << "Created ht. character is " << ht->get_char() << " and freq is " << ht->get_freq() << "\n";
+
+    if(*ht<*ht2)
+        cout << "works";
+
+    cout << "\n\n\nNext Test:\n\nCreating and sorting a list of HuffTree's\n\n";
+
+    HuffTree *ht3 = new HuffTree;
+    ht3->insert('c',3);
+
+    cout << "Trees to be added to the list:\n\n\tTree: ht\n\tchar: " << ht->get_char()
+         << "\n\tfreq: " << ht->get_freq() << "\n\n\tTree: ht2\n\tchar: " << ht2->get_char()
+         << "\n\tfreq: " << ht2->get_freq() << "\n\n\tTree: ht3\n\tchar: " << ht3->get_char()
+         << "\n\tfreq: " << ht3->get_freq() << "\n\n\nAdding trees to list...\n\n";
+
+    LinkedList<HuffTree> *tree_list = new LinkedList<HuffTree>;
+    tree_list->push_front(*ht);
+    tree_list->push_front(*ht2);
+    tree_list->push_front(*ht3);
+
+    cout << "Entering for loop...\n";
+    LinkedList<HuffTree>::list_iterator li=tree_list->begin();
+    cout << "Tree char: " << li.val().get_char() << "\n";
+    for(LinkedList<HuffTree>::list_iterator li=tree_list->begin(); li!=tree_list->end(); li++)
+        cout << "Tree char: " << li.val().get_char() << " freq: " << li.val().get_freq() << "\n";
+
+    tree_list->sort_list();
+
+    cout << "Entering for loop...\n";
+    for(LinkedList<HuffTree>::list_iterator li=tree_list->begin(); li!=tree_list->end(); li++)
+        cout << "Tree char: " << li.val().get_char() << " freq: " << li.val().get_freq() << "\n";
+
+
+    return 0;
+
+}

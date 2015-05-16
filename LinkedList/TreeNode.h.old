@@ -1,0 +1,19 @@
+template<class T>
+class TreeNode
+{
+    public:
+        TreeNode<T>();
+        ~TreeNode<T>();
+        T data();
+        void set_data(T nData);
+        TreeNode<T> *get_left();
+        TreeNode<T> *get_right();
+        void set_left(TreeNode<T> *tn);
+        void set_right(TreeNode<T> *tn);
+
+    private:
+        T nodeData;
+        TreeNode<T> *left;
+        TreeNode<T> *right;
+
+};

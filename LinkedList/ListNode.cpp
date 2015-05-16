@@ -39,13 +39,13 @@ void ListNode<T>::set_prev(ListNode<T> *node)
 }
 
 template<class T>
-T ListNode<T>::data()
+T *ListNode<T>::data()
 {
-    return nodeData;
+        return nodeData;
 }
 
 template<class T>
-void ListNode<T>::set_data(T nData)
+void ListNode<T>::set_data(T *nData)
 {
     nodeData = nData;
 }

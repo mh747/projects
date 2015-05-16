@@ -11,11 +11,11 @@ class ListNode
         ListNode<T> *get_prev();
         void set_prev(ListNode<T> *node);
 
-        T data();
-        void set_data(T nData);
+        T *data();
+        void set_data(T *nData);
 
     private:
         ListNode<T> *prev;
         ListNode<T> *next;
-        T nodeData;
+        T *nodeData;
 }; 

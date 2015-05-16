@@ -1,0 +1,68 @@
+#include<iostream>
+#include "TreeNode.h"
+using namespace std;
+
+template<class T>
+TreeNode<T>::TreeNode()
+{
+    left = NULL;
+    right = NULL;
+}
+
+template<class T>
+TreeNode<T>::~TreeNode()
+{
+}
+
+template<class T>
+T TreeNode<T>::data()
+{
+    return nodeData;
+}
+
+template<class T>
+void TreeNode<T>::set_data(T nData)
+{
+    nodeData = nData;
+}
+
+template<class T>
+TreeNode<T> *TreeNode<T>::get_left()
+{
+    return left;
+}
+
+template<class T>
+TreeNode<T> *TreeNode<T>::get_right()
+{
+    return right;
+}
+
+template<class T>
+void TreeNode<T>::set_left(TreeNode<T> *tn)
+{
+    left = tn;
+}
+
+template<class T>
+void TreeNode<T>::set_right(TreeNode<T> *tn)
+{
+    right = tn;
+}
+
+/*int main()
+{
+    TreeNode<int> tn1, tn2, tn3;
+    tn1.set_data(5);
+    tn2.set_data(6);
+    tn3.set_data(7);
+
+    tn2.set_left(&tn1);
+    tn2.set_right(&tn3);
+
+    cout << "tn2 value: " << tn2.data() << "\ntn2 left child value: " << tn2.get_left()->data()
+         << "\ntn2 right value: " << tn2.get_right()->data() << "\n\n";
+
+    return 0;
+
+}*/
