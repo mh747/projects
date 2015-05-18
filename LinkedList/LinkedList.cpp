@@ -249,6 +249,7 @@ void LinkedList<T>::sort_list()
         while((comparer != NULL) && (*(element->data()) <= *(comparer->data()))) {
             comparer = comparer->get_prev();
             shouldSwap = 1;
+            cout << "should swap\n";
         }
         if(shouldSwap) {
             //Removing element from its place in the list
@@ -281,7 +282,11 @@ void LinkedList<T>::sort_list()
 template<class T>
 typename LinkedList<T>::list_iterator LinkedList<T>::begin()
 {
-    list_iterator rtn(head);
+    list_iterator rtn;
+    if(head != NULL)
+        rtn = list_iterator(head);
+    else
+        rtn = list_iterator(endNode);
     return rtn;
 }
 

@@ -1,4 +1,5 @@
 #include<iostream>
+#include<string>
 
 class TreeNode;
 
@@ -13,6 +14,8 @@ class HuffTree
         int get_freq() const;
         void output_tree() const;
         void alternate_output();
+        string get_huff_string(char c);
+        char get_huff_char(string huff_string);
 
         void operator=(const HuffTree &ht);
         bool operator>(const HuffTree &ht);
@@ -26,6 +29,7 @@ class HuffTree
         void output_tree(TreeNode *node) const;
         void alternate_output(TreeNode *node, int level);
         void copy_tree(TreeNode *node, TreeNode *otherNode);
+        void get_huff_string(TreeNode *node, char c, string huff_string, string &s);
 
         TreeNode *root;
 };
