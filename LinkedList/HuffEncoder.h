@@ -14,7 +14,7 @@ class HuffEncoder
     public:
         struct CharFreq
         {
-            char c;
+            unsigned char c;
             int freq;
 
             bool operator<(const CharFreq &cf) const
@@ -43,13 +43,17 @@ class HuffEncoder
         ~HuffEncoder();
         void set_infile(string filename);
         void set_outfile(string filename);
-        void encode();
+        void encode(string iFilename, string oFilename);
+        void decode(string iFilename, string oFilename);
         void decode();
         vector<CharFreq> frequencies;
         vector<string> huff_strings;
         LinkedList<HuffTree> *tree_list;
 
     private:
+        void output_bit(char bit);
+        HuffTree *combine_list_trees();
+        string bit_buffer;
         ifstream infile;
         ofstream outfile;
 
