@@ -43,8 +43,8 @@ class HuffEncoder
         ~HuffEncoder();
         void set_infile(string filename);
         void set_outfile(string filename);
-        void encode(string iFilename, string oFilename);
-        void decode(string iFilename, string oFilename);
+        bool encode(string iFilename, string oFilename);
+        bool decode(string iFilename, string oFilename);
         void decode();
         vector<CharFreq> frequencies;
         vector<string> huff_strings;

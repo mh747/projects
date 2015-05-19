@@ -30,6 +30,7 @@ HuffEncoder::~HuffEncoder()
         infile.close();
     if(outfile.is_open())
         outfile.close();
+    delete tree_list;
 }
 
 void HuffEncoder::set_infile(string filename)
@@ -37,8 +38,7 @@ void HuffEncoder::set_infile(string filename)
     infile.open(filename.c_str(),ios::in);
 
     if(!infile) {
-        cout << "File '" << filename << "' could not be opened for reading. Exiting...";
-        exit(1);
+        cout << "File '" << filename << "' could not be opened for reading.\n";
     }
 }
 
@@ -51,20 +51,20 @@ void HuffEncoder::set_outfile(string filename)
     }
 
     if(!outfile) {
-        cout << "File '" << filename << "' could not be opened for output. Exiting...";
-        exit(1);
+        cout << "File '" << filename << "' could not be opened for output.\n";
     }
 }
 
-void HuffEncoder::decode(string iFilename, string oFilename)
+bool HuffEncoder::decode(string iFilename, string oFilename)
 {
     set_infile(iFilename);
     set_outfile(oFilename);
+    bool success = 1;
 
     if(infile.is_open() && outfile.is_open()) {
 
-        cout << "Decompressing file '" << iFilename << "' to '"
-             << oFilename << "'...\n\n";
+        //cout << "Decompressing file '" << iFilename << "' to '"
+             //<< oFilename << "'...\n\n";
         int freq;
 
         //Reading in file header to populate frequencies
@@ -122,27 +122,33 @@ void HuffEncoder::decode(string iFilename, string oFilename)
                 startPos+=slen;
                 totalChars--;
             } 
+        } else {
+            success = 0;
         }
 
         infile.close();
         outfile.close();
     } else {
+        success = 0;
         if(!infile.is_open())
             cout << "'" << iFilename << "' is not opened.'\n";
         if(!outfile.is_open())
             cout << "'" << oFilename << "' is not opened.'\n"; 
     }
+
+    return success;
 }
         
-void HuffEncoder::encode(string iFilename, string oFilename)
+bool HuffEncoder::encode(string iFilename, string oFilename)
 {
     set_infile(iFilename);
     set_outfile(oFilename);
+    bool success = 1;
     
     if(infile.is_open() && outfile.is_open()){
 
-        cout << "Compressing file '" << iFilename << "' to '"
-             << oFilename << "'...\n\n";
+        //cout << "Compressing file '" << iFilename << "' to '"
+             //<< oFilename << "'...\n\n";
         char ch;
         unsigned char letter;
 
@@ -211,17 +217,21 @@ void HuffEncoder::encode(string iFilename, string oFilename)
 
         } else {
             cout <<  "Combined tree is NULL. Not continuing.\n";
+            success = 0;
             exit(1);
         }
 
         infile.close();
         outfile.close();
     } else {
+        success = 0;
         if(!infile.is_open())
-            cout << "Input file is not opened.\n";
+            cout << "Input file could not be opened.\n";
         if(!outfile.is_open())
-            cout << "Output file is not opened.\n";
+            cout << "Output file could not be opened.\n";
     }
+
+    return success;
 }
 
 void HuffEncoder::output_bit(char bit)
@@ -263,10 +273,10 @@ HuffTree *HuffEncoder::combine_list_trees()
                 i++;
                 li++;         
             }
-            cout << "inserting tree before " << i << "th element.\n";
+            //cout << "inserting tree before " << i << "th element.\n";
             tree_list->insert(*combined,li);
             final = combined; 
-            cout << "Remaining trees in list: " << tree_list->size << "\n";
+            //cout << "Remaining trees in list: " << tree_list->size << "\n";
             LinkedList<HuffTree>::list_iterator li2 = tree_list->begin();
             for(li2=tree_list->begin(); li2!=tree_list->end(); li2++) {
       //          li2.val().alternate_output();
@@ -276,24 +286,16 @@ HuffTree *HuffEncoder::combine_list_trees()
     return final;
 }
 
-int main()
+/*int main()
 {
     HuffEncoder he;
-    he.encode("infile.txt","outfile");
+    bool encoded = he.encode("infile.txt","outfile");
+    cout << "Encode() passed?: " << encoded << "\n\n";
 
     HuffEncoder he2;
-    he2.decode("outfile","decoded");
+    bool decoded = he2.decode("outfile","decoded");
+    cout << "Decode() passed?: " << decoded << "\n\n";
 
-/*    LinkedList<HuffTree>::list_iterator li = he.tree_list->begin();
-    for(li=he.tree_list->begin(); li!=he.tree_list->end(); li++) {
-        cout << "List item:\n";
-        li.val().alternate_output();
-    }
-     
-    for(li=he.tree_list->begin(); li!=he.tree_list->end(); li++) {
-        cout << "List Item:\n";
-        li.val().alternate_output();
-    }*/
-}
+}*/
 
 
