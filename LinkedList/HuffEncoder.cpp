@@ -250,24 +250,39 @@ void HuffEncoder::output_bit(char bit)
 
 HuffTree *HuffEncoder::combine_list_trees()
 {
-    HuffTree *combined = NULL;
-    if(!tree_list->empty()) {
-        combined = new HuffTree(tree_list->pop_front());
-        while(!tree_list->empty()) {
-            HuffTree *temp = combined;
+    HuffTree *final = NULL;
+    if(tree_list->size > 1) {
+        while(tree_list->size > 1) {
+            HuffTree *temp = new HuffTree(tree_list->pop_front());
             HuffTree *t1 = new HuffTree(tree_list->pop_front());
-            combined = new HuffTree(*temp,*t1);
-            //combined->alternate_output();
+            HuffTree *combined = new HuffTree(*temp,*t1);
+       //     combined->alternate_output();
+            LinkedList<HuffTree>::list_iterator li = tree_list->begin();
+            int i =0;
+            while(li != tree_list->end() && li.val().get_freq()<combined->get_freq()) {
+                i++;
+                li++;         
+            }
+            cout << "inserting tree before " << i << "th element.\n";
+            tree_list->insert(*combined,li);
+            final = combined; 
+            cout << "Remaining trees in list: " << tree_list->size << "\n";
+            LinkedList<HuffTree>::list_iterator li2 = tree_list->begin();
+            for(li2=tree_list->begin(); li2!=tree_list->end(); li2++) {
+      //          li2.val().alternate_output();
+            }
         }
     }
-    return combined;
+    return final;
 }
 
 int main()
 {
     HuffEncoder he;
     he.encode("infile.txt","outfile");
-    he.decode("outfile","decoded");
+
+    HuffEncoder he2;
+    he2.decode("outfile","decoded");
 
 /*    LinkedList<HuffTree>::list_iterator li = he.tree_list->begin();
     for(li=he.tree_list->begin(); li!=he.tree_list->end(); li++) {

@@ -80,7 +80,7 @@ typename LinkedList<T>::list_iterator LinkedList<T>::insert(T &newVal, list_iter
         ln->get_next()->set_prev(ln);
         size++;
     }
-    li--;
+    li = list_iterator(li.node->get_prev());
 
     return li;
 }
